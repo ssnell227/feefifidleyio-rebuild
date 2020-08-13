@@ -23,6 +23,7 @@ module.exports = function (io) {
             socket.on('startGame', () => {
                 getRoom(gameId).playing = true
                 io.in(gameId).emit('begin')
+                console.log('startGame triggered')
                 runGame(io, gameId)
             })
             
@@ -36,6 +37,7 @@ module.exports = function (io) {
                 removeUser(gameId, socket.id)
                 io.in(gameId).emit('roomData', {users: getUsersInRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
+                    console.log('leaveRoom ln 40')
                     removeRoom(gameId)
                 }
                 console.log('left')
@@ -44,6 +46,7 @@ module.exports = function (io) {
                 removeUser(gameId, socket.id)
                 io.in(gameId).emit('roomData', {users: getUsersInRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
+                    console.log('disconnect ln 49')
                     removeRoom(gameId)
                 }
                 console.log('left')

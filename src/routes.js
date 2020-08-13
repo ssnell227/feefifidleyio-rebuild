@@ -5,7 +5,8 @@ import Lobby from './views/Lobby'
 
 export default (
     <Switch>
-        <Route path='/' exact component={Landing}/>
+        <Route path='/landing' component={Landing}/>
         <Route path='/Lobby' component={Lobby}/>
+        <Route path='/' exact component={Landing}/>
     </Switch>
 )

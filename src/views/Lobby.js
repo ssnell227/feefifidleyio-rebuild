@@ -14,6 +14,7 @@ import Game from './Game'
 let socket
 
 const Lobby = (props) => {
+
     const {
         playlist_name: playlistName,
         spotify_id: spotifyId,
@@ -48,8 +49,10 @@ const Lobby = (props) => {
 
         //render the Game component through a state change
         socket.on('begin', () => {
+            console.log('begin heard')
             setPlaying(true)
         })
+
         return () => {
             socket.emit('leaveRoom')
             socket.off()
@@ -83,19 +86,21 @@ const Lobby = (props) => {
         })
     }, [])
 
+    
+
+    const startGame = () => {
+        socket.emit('startGame')
+    }
+
     return (
-        <>
-            {!gameHash ? <Redirect to='/' /> :
-                <div>
-                    Lobby
-                <InfoDisplay playlistName={playlistName} playlistImg={playlistImg} />
-                <PlayerList users={users} />
-                <Chat />
-                <InviteLink />
-                {playing && <Game songs={songs} socket={socket} />}
-                </div>
-            }
-        </>
+        <div>
+            Lobby
+            <InfoDisplay startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
+            <PlayerList users={users} />
+            <Chat />
+            <InviteLink />
+            {playing && <Game songs={songs} socket={socket} setPlayingLobby={setPlaying} />}
+        </div>
     )
 }
 

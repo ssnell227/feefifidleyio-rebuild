@@ -28,7 +28,7 @@ const runGame = async (io, gameId) => {
     const currentRoom = getRoom(gameId)
     currentRoom.counter = getReadySeconds
 
-    io.in(gameId).emit('nextRound')
+    io.in(gameId).emit('nextRound', {currentRound: currentRoom.currentRound})
 
     console.log('game running')
 
@@ -40,7 +40,7 @@ const runGame = async (io, gameId) => {
             currentRoom.counter--
         } else if (currentRoom.counter <= 0) {
             getReadyTimer.stop()
-            io.in(gameId).emit('switchMode')
+            io.in(gameId).emit('switchMode', {currentRound:currentRoom.currentRound})
             currentRoom.counter = gameSeconds
             io.in(gameId).emit('timerDecrement', { seconds: currentRoom.counter })
             currentRoom.counter--
@@ -69,8 +69,8 @@ const runGame = async (io, gameId) => {
             gamePlayTimer.stop()
             currentRoom.currentRound++
             currentRoom.counter = getReadySeconds
-            io.in(gameId).emit('switchMode', {})
             io.in(gameId).emit('nextRound')
+            io.in(gameId).emit('switchMode', {currentRound:currentRoom.currentRound})
             io.in(gameId).emit('timerDecrement', { seconds: currentRoom.counter })
             currentRoom.counter--
             getReadyTimer.start()

@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Timer = () => (
+const Timer = ({timer}) => (
     <div>
-        
+        <p>{timer}</p>
     </div>
 )
 
