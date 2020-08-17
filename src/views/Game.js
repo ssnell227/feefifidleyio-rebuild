@@ -4,7 +4,7 @@ import Timer from '../components/game/Timer'
 
 //08/13/20 rendering song cards in correct order, but there's a strange problem with the order of the cards for the last round.
 
-const Game = ({songs:{songs}, socket, setPlayingLobby}) => {
+const Game = ({songs, socket, setPlayingLobby}) => {
     const [currentSongs, setCurrentSongs] = useState([])
     const [playing, setPlaying] = useState(false)
     const [round, setRound] = useState(0)
@@ -12,6 +12,19 @@ const Game = ({songs:{songs}, socket, setPlayingLobby}) => {
     const [gameOver, setGameOver] = useState(false)
     const [guessed, setGuessed] = useState(false)
     
+    const generateRandomOrdered = (currentRound) => {
+        
+        const choiceArray = [songs[currentRound].song, ...songs[currentRound].dummyArray]
+        const availableIndices = choiceArray.map((i, index) => index)
+        const shuffledArray = new Array(4)
+
+        choiceArray.forEach(item => {
+            const randomIndex = Math.floor(Math.random() * availableIndices.length - 1)
+
+            shuffledArray.splice(availableIndices.splice(randomIndex, 1), 1, item)
+        })
+        setCurrentSongs(shuffledArray)
+    }
     //update timer, trigger game over, and update parent component state on game-over
     useEffect(() => {
         socket.on('timerDecrement', ({ seconds }) => {
@@ -47,22 +60,9 @@ const Game = ({songs:{songs}, socket, setPlayingLobby}) => {
                 generateRandomOrdered(round)
             }
         }) 
-    }, [songs.length, round])
+    }, [round, socket, songs, generateRandomOrdered])
 
     //function to take in full list of songs for the game and set state to a randomly ordered set of songs for a single round
-    const generateRandomOrdered = (currentRound) => {
-        
-        const choiceArray = [songs[currentRound].song, ...songs[currentRound].dummyArray]
-        const availableIndices = choiceArray.map((i, index) => index)
-        const shuffledArray = new Array(4)
-
-        choiceArray.forEach(item => {
-            const randomIndex = Math.floor(Math.random() * availableIndices.length - 1)
-
-            shuffledArray.splice(availableIndices.splice(randomIndex, 1), 1, item)
-        })
-        setCurrentSongs(shuffledArray)
-    }
 
     const songsMap = currentSongs.map((song, index) => (
         <SongCard 

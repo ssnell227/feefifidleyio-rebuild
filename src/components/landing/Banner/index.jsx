@@ -2,8 +2,7 @@ import React from 'react'
 
 const Banner = ({username}) => (
     <div>
-        Working
-        {username}
+        FeeFiFidley.io
     </div>
 )
 

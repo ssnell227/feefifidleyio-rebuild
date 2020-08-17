@@ -11,10 +11,9 @@ import InviteLink from '../components/lobby/InviteLink'
 import PlayerList from '../components/lobby/PlayerList'
 import Game from './Game'
 
-let socket
+let socket, playlistName, spotifyId, playlistImg
 
 const Lobby = (props) => {
-
     const {
         playlist_name: playlistName,
         spotify_id: spotifyId,
@@ -33,9 +32,14 @@ const Lobby = (props) => {
     const { username, setUsername } = usernameValue
     const { gameHash, setGameHash } = gameHashValue
 
-    //mount and dismount functions
-    useEffect(() => {
+    const startGame = () => {
+        socket.emit('startGame')
+    }
 
+
+    //mount and dismount effects
+    useEffect(() => {
+        
         socket = io()
 
         //send the server the user's data
@@ -54,7 +58,8 @@ const Lobby = (props) => {
         })
 
         return () => {
-            socket.emit('leaveRoom')
+            setGameHash(null)
+            socket.emit('leaveRoom', {gameHash})
             socket.off()
         }
     }, [username, gameHash, playlistName, spotifyId, playlistImg])
@@ -63,6 +68,7 @@ const Lobby = (props) => {
     useEffect(() => {
         socket.on('roomData', ({ room }) => {
             const { users, playlistName, playlistId, spotifyId, playlistImg } = room
+            console.log(users)
             try {
                 const sortedUsers = users.map(user => {
                     const userScore = user.score.map(item => 1 + 1 / (item.date % 100000))
@@ -77,28 +83,26 @@ const Lobby = (props) => {
                 setLoading(false)
             }
         })
-    })
+    }, [loading])
 
     //set songs for game
     useEffect(() => {
-        socket.on('sendSongs', (songs) => {
+        socket.on('sendSongs', ({songs}) => {
+            console.log(songs)
             setSongs(songs)
         })
     }, [])
 
     
 
-    const startGame = () => {
-        socket.emit('startGame')
-    }
-
+   
     return (
         <div>
             Lobby
             <InfoDisplay startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
             <PlayerList users={users} />
             <Chat />
-            <InviteLink />
+            <InviteLink gameHash={gameHash}/>
             {playing && <Game songs={songs} socket={socket} setPlayingLobby={setPlaying} />}
         </div>
     )

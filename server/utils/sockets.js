@@ -2,7 +2,6 @@ const {addRoom, addUser, removeUser, getUsersInRoom, getRoom, removeRoom, runGam
 
 module.exports = function (io) {
     io.on('connection',  (socket) => {
-        console.log('connection')
         socket.on('join', (userObj) => {
             const { username, gameId, spotifyId} = userObj
             socket.join(gameId)
@@ -12,11 +11,13 @@ module.exports = function (io) {
             if (getRoom(gameId) && getUsersInRoom(gameId).length >=4) {
                 io.to(socket.id).emit('tooManyPlayers')
             } else if (getRoom(gameId) && !getRoom(gameId).playing) {
+                console.log('adding user', username )
                 addUser({gameId, username, socketId: socket.id}, io)
-                io.in(gameId).emit('roomData', {room: getRoom(gameId), message: 'joined'})
+                io.in(gameId).emit('roomData', {room: getRoom(gameId)})
             } else if(getRoom(gameId) && getRoom(gameId).playing ) {
                 io.to(socket.id).emit('gameInProgress')
             } else {
+                console.log('adding room')
                 addRoom(userObj, socket.id, io).then(() => io.in(gameId).emit('roomData', {room: getRoom(gameId), message: 'created'}))
             }
 
@@ -33,23 +34,23 @@ module.exports = function (io) {
             })
 
             // remove user from users array and resend room data to other users in room.  If no users in room, remove the room
-            socket.on('leaveRoom', () => {
+            socket.on('leaveRoom', ({gameHash}) => {
                 removeUser(gameId, socket.id)
-                io.in(gameId).emit('roomData', {users: getUsersInRoom(gameId)})
+                console.log(socket)
+                io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('leaveRoom ln 40')
-                    removeRoom(gameId)
+                    removeRoom(gameHash)
                 }
-                console.log('left')
             })
             socket.on('disconnect', () => {
-                removeUser(gameId, socket.id)
-                io.in(gameId).emit('roomData', {users: getUsersInRoom(gameId)})
+                removeUser(socket)
+                console.log(getUsersInRoom(gameId), 'get users on disconnect')
+                io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('disconnect ln 49')
                     removeRoom(gameId)
                 }
-                console.log('left')
             })
         })
     })

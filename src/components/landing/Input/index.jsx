@@ -1,17 +1,18 @@
 import React from 'react'
 
-const Input = ({username, setUsername, setDisplayPlaylists}) => (
+const Input = ({username, setUsername, setDisplayPlaylists, joinDisplay, handleJoinGame}) => (
     <div>
+        <p>Enter a username:</p>
         <input onChange={(e) => {
             e.preventDefault()
             setUsername(e.target.value)
         }}/>
-        <button>
+        {joinDisplay && <button onClick={() => handleJoinGame()}>
             Join game
-        </button>
-        <button onClick={() => username ? setDisplayPlaylists(true): null}>
+        </button>}
+        {!joinDisplay && <button onClick={() => username ? setDisplayPlaylists(true): null}>
             New game
-        </button>
+        </button>}
     </div>
 )
 

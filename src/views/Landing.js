@@ -14,24 +14,35 @@ import PlaylistCard from '../components/landing/PlaylistCard'
 
 
 
-const Landing = () => {
+const Landing = (props) => {
     const { usernameValue, gameHashValue } = useContext(Context)
     const { username, setUsername } = usernameValue
     const { gameHash, setGameHash } = gameHashValue
     
     const [playlists, setPlaylists] = useState([])
     const [displayPlaylists, setDisplayPlaylists] = useState(false)
+    const [joinDisplay, setJoinDisplay] = useState(false)
 
     const handleChoosePlaylist = (spotifyId) => {
         const newHash = createHash(10) + '$' + spotifyId
         setGameHash(newHash)
     }
 
+    const handleJoinGame = () => {
+        if (username) {
+        setGameHash(props.match.params.gameHash)
+        }
+    }
+
     useEffect(() => {
         if (!playlists.length) {
             axios.get('/api/playlists').then(res => setPlaylists(res.data))
         }
-    }, [playlists])
+        if (props.match.params.gameHash) {
+            setJoinDisplay(true)
+        }
+
+    }, [playlists, setJoinDisplay])
 
     const playlistMap = playlists.map(item => (
         <PlaylistCard
@@ -46,7 +57,13 @@ const Landing = () => {
     return (
         <div>
             <Banner username={username} />
-            <Input username={username} setUsername={setUsername} setDisplayPlaylists={setDisplayPlaylists} />
+            <Input 
+            handleJoinGame={handleJoinGame} 
+            joinDisplay={joinDisplay} 
+            username={username} 
+            setUsername={setUsername} 
+            setDisplayPlaylists={setDisplayPlaylists} 
+            />
             {gameHash && <Redirect to={{
                 pathname: '/lobby',
                 state: {

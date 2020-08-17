@@ -141,7 +141,6 @@ const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, 
         counter: 0
     })
 
-    console.log(rooms)
 
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }
@@ -159,8 +158,8 @@ const addUser = ({ gameId, username, socketId }, io) => {
 
     users.push({ username, socketId, score: [] })
 
-
-    io.in(gameId).emit('sendSongs', { currentSongObj: currentRoom.gameObjs })
+    console.log(currentRoom.gameObjs)
+    io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }
 
 const removeUser = ( gameId, socketId ) => {
