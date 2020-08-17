@@ -5,7 +5,7 @@ import { Context } from '../context/Context'
 
 const Nav = () => {
     const { gameHashValue } = useContext(Context)
-    const { gameHash, setGameHash } = gameHashValue
+    const { setGameHash } = gameHashValue
 
     return (
         <div>

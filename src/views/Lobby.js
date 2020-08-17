@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
 import io from 'socket.io-client'
-import { Redirect } from 'react-router-dom'
-
 import { Context } from '../context/Context'
 
 //components
@@ -11,7 +9,7 @@ import InviteLink from '../components/lobby/InviteLink'
 import PlayerList from '../components/lobby/PlayerList'
 import Game from './Game'
 
-let socket, playlistName, spotifyId, playlistImg
+let socket
 
 const Lobby = (props) => {
     const {
@@ -29,8 +27,8 @@ const Lobby = (props) => {
 
     //context
     const { usernameValue, gameHashValue } = useContext(Context)
-    const { username, setUsername } = usernameValue
-    const { gameHash, setGameHash } = gameHashValue
+    const { username } = usernameValue
+    const { gameHash } = gameHashValue
 
     const startGame = () => {
         socket.emit('startGame')
@@ -58,7 +56,7 @@ const Lobby = (props) => {
         })
 
         return () => {
-            socket.emit('leaveRoom', {gameHash})
+            socket.emit('leaveRoom')
             socket.off()
         }
     }, [username, gameHash, playlistName, spotifyId, playlistImg])
@@ -66,7 +64,7 @@ const Lobby = (props) => {
     //room data functions
     useEffect(() => {
         socket.on('roomData', ({ room }) => {
-            const { users, playlistName, playlistId, spotifyId, playlistImg } = room
+            const { users } = room
             console.log(users)
             try {
                 const sortedUsers = users.map(user => {

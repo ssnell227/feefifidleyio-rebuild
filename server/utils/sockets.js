@@ -34,12 +34,12 @@ module.exports = function (io) {
             })
 
             // remove user from users array and resend room data to other users in room.  If no users in room, remove the room
-            socket.on('leaveRoom', ({gameHash}) => {
+            socket.on('leaveRoom', () => {
                 removeUser(gameId, socket.id)
                 io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('leaveRoom ln 40')
-                    removeRoom(gameHash)
+                    removeRoom(gameId)
                 }
             })
             socket.on('disconnect', () => {

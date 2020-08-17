@@ -42,7 +42,7 @@ const Landing = (props) => {
             setJoinDisplay(true)
         }
 
-    }, [playlists, setJoinDisplay])
+    }, [playlists, setJoinDisplay, props.match.params.gameHash])
 
     const playlistMap = playlists.map(item => (
         <PlaylistCard
