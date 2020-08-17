@@ -10,7 +10,7 @@ const Game = ({songs, socket, setPlayingLobby}) => {
     const [round, setRound] = useState(1)
     const [timer, setTimer] = useState(null)
     const [gameOver, setGameOver] = useState(false)
-    const [guessed, setGuessed] = useState(false)
+    const [guessed, setGuessed] = useState('')
 
     const audioRef = useRef(null)
     
@@ -28,6 +28,13 @@ const Game = ({songs, socket, setPlayingLobby}) => {
         
         setCurrentSongs(shuffledArray)
     }
+
+    const handleSetGuessed = (songName) => {
+        if (!guessed) {
+            setGuessed(songName)
+        }
+    }
+
     //update timer, trigger game over, and update parent component state on game-over
     useEffect(() => {
         socket.on('timerDecrement', ({ seconds }) => {
@@ -56,9 +63,10 @@ const Game = ({songs, socket, setPlayingLobby}) => {
         socket.on('nextRound', () => {
             // console.log(currentRound, 'round from server')
             // setRound(currentRound)
-            // setGuessed(false)
+            
             console.log(round, 'round from state')
             if (round <= songs.length) {
+                setGuessed('')
                 generateRandomOrdered(round)
             }
         }) 
@@ -66,7 +74,7 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
     useEffect(() => {
         if (playing && !gameOver) {
-            audioRef.current.play()
+            audioRef.current.play() 
         } else {
             audioRef.current.pause()
         }
@@ -76,6 +84,8 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
     const songsMap = currentSongs.map((song, index) => (
         <SongCard 
+        handleSetGuessed={handleSetGuessed}
+        classStr={`gameCard ${guessed && song.correct ? 'correct' : null} ${guessed && !song.correct && guessed === song.name ? 'incorrect' : null}`}
         key={index+'song'}
         name={song.name} 
         imgURL={song.album.images[0].url} 
