@@ -158,7 +158,6 @@ const addUser = ({ gameId, username, socketId }, io) => {
 
     users.push({ username, socketId, score: [] })
 
-    console.log(currentRoom.gameObjs)
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }
 

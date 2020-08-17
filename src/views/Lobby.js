@@ -58,7 +58,6 @@ const Lobby = (props) => {
         })
 
         return () => {
-            setGameHash(null)
             socket.emit('leaveRoom', {gameHash})
             socket.off()
         }
@@ -88,7 +87,6 @@ const Lobby = (props) => {
     //set songs for game
     useEffect(() => {
         socket.on('sendSongs', ({songs}) => {
-            console.log(songs)
             setSongs(songs)
         })
     }, [])

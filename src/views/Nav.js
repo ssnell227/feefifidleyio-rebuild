@@ -1,10 +1,15 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import {Link, withRouter} from 'react-router-dom'
 
+import { Context } from '../context/Context'
+
 const Nav = () => {
+    const { gameHashValue } = useContext(Context)
+    const { gameHash, setGameHash } = gameHashValue
+
     return (
         <div>
-            <Link  to='/landing'>Back</Link>
+            <Link onClick={() => setGameHash(null)} to='/landing'>Home</Link>
         </div>
     )
 }
