@@ -6,6 +6,7 @@ import Timer from '../components/game/Timer'
 
 const Game = ({songs, socket, setPlayingLobby}) => {
     const [currentSongs, setCurrentSongs] = useState([])
+    const [prevSongs, setPrevSongs] = useState([])
     const [playing, setPlaying] = useState(false)
     const [round, setRound] = useState(0)
     const [timer, setTimer] = useState(null)
@@ -23,13 +24,13 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
             shuffledArray.splice(availableIndices.splice(randomIndex, 1), 1, item)
         })
+        setPrevSongs(currentSongs => currentSongs)
         setCurrentSongs(shuffledArray)
     }
     //update timer, trigger game over, and update parent component state on game-over
     useEffect(() => {
         socket.on('timerDecrement', ({ seconds }) => {
             //what was I using socket for here?
-            console.log(seconds, 'seconds from server')
             setTimer(seconds)
         })
 
@@ -37,15 +38,16 @@ const Game = ({songs, socket, setPlayingLobby}) => {
             setGameOver(true)
         })
         // return setPlayingLobby(false)
-    }, [])
+    }, [socket])
 
     //switches between song playing countdown and get ready countdown
     useEffect(() => {
-        socket.on('switchMode', ({currentRound}) => {
-            setPlaying(playing => !playing)
+        socket.on('switchMode', ({currentRound, roomPlaying}) => {
+            console.log('switch mode')
+            setPlaying(roomPlaying)
             setRound(currentRound)
         })
-    })
+    }, [socket])
 
     //updates the round and creates the next round's list of songs
     useEffect(() => {
@@ -54,13 +56,12 @@ const Game = ({songs, socket, setPlayingLobby}) => {
             // console.log(currentRound, 'round from server')
             // setRound(currentRound)
             // setGuessed(false)
-            console.log(songs)
             console.log(round, 'round from state')
             if (round < songs.length) {
                 generateRandomOrdered(round)
             }
         }) 
-    }, [round, socket, songs, generateRandomOrdered])
+    }, [round, socket, songs])
 
     //function to take in full list of songs for the game and set state to a randomly ordered set of songs for a single round
 
@@ -73,10 +74,20 @@ const Game = ({songs, socket, setPlayingLobby}) => {
         />
     ))
 
+    const prevSongsMap = prevSongs.map((song, index) => (
+        <SongCard 
+        key={index+'song'}
+        name={song.name} 
+        imgURL={song.album.images[0].url} 
+        artist={song.artists[0].name}
+        />
+    ))
+
     return (
         <div>
             <Timer timer={timer}/>
-            {songsMap}
+            {!playing && round >=1 && prevSongsMap}
+            {playing && songsMap}
         </div>
     )
 }
