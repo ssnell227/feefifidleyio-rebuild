@@ -145,9 +145,10 @@ const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, 
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }
 
-const removeRoom = ({ gameId }) => {
+const removeRoom = (gameId) => {
     const index = rooms.findIndex(item => item.gameId === gameId)
     rooms.splice(index, 1)
+    console.log(rooms)
 }
 
 //user functions
@@ -161,7 +162,7 @@ const addUser = ({ gameId, username, socketId }, io) => {
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }
 
-const removeUser = ( gameId, socketId ) => {
+const removeUser = (gameId, socketId ) => {
     try {
         const users = rooms.find(item => item.gameId === gameId).users
 
@@ -172,7 +173,7 @@ const removeUser = ( gameId, socketId ) => {
             return users.splice(index, 1)[0]
         }
     } catch {
-        
+        console.log('remove user failed')
     }
 }
 

@@ -36,7 +36,6 @@ module.exports = function (io) {
             // remove user from users array and resend room data to other users in room.  If no users in room, remove the room
             socket.on('leaveRoom', ({gameHash}) => {
                 removeUser(gameId, socket.id)
-                console.log(socket)
                 io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('leaveRoom ln 40')
@@ -44,8 +43,8 @@ module.exports = function (io) {
                 }
             })
             socket.on('disconnect', () => {
-                removeUser(socket)
-                console.log(getUsersInRoom(gameId), 'get users on disconnect')
+                console.log(gameId)
+                removeUser(gameId, socket.id)
                 io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('disconnect ln 49')
