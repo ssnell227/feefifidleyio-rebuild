@@ -89,9 +89,6 @@ const Lobby = (props) => {
         })
     }, [])
 
-    
-
-   
     return (
         <div>
             Lobby

@@ -60,8 +60,8 @@ const runGame = async (io, gameId) => {
             
             const songList = currentRoom.gameObjs.map(round => round.song.name).join('#')
             
-            const winner = calculateWinner(currentRoom.users)
-            io.in(gameId).emit('gameOver', {winner})
+            // const winner = calculateWinner(currentRoom.users)
+            // io.in(gameId).emit('gameOver', {winner})
             return 
 
         }  else if (currentRoom.counter <= 0) {
@@ -79,15 +79,20 @@ const runGame = async (io, gameId) => {
 
 }
 
-const changeScore = ({ gameId, socketId, correctSong, date }) => {
+const changeScore = ({ gameId, socketId, date }) => {
 
     const users = getUsersInRoom(gameId)
 
     const user = users.find(user => user.socketId === socketId)
 
-    if (!user.score.includes(correctSong)) {
-        user.score.push({ correctSong, date })
-    }
+    user.score += 1+ 1/(date % 100000)
+    
+    console.log(user)
+
+    //create better way to keep track of score here
+    // if (!user.score.includes(correctSong)) {
+    //     user.score.push({ correctSong, date })
+    // }
 }
 
 //room functions
@@ -130,7 +135,7 @@ const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, 
 
     rooms.push({
         gameId,
-        users: [{ username, socketId, score: [] }],
+        users: [{ username, socketId, score: 0 }],
         playlistName,
         spotifyId,
         playlistImg,
@@ -156,7 +161,7 @@ const addUser = ({ gameId, username, socketId }, io) => {
     const currentRoom = getRoom(gameId)
     const users = rooms.find(item => item.gameId === gameId).users
 
-    users.push({ username, socketId, score: [] })
+    users.push({ username, socketId, score: 0 })
 
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }

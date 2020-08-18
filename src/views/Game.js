@@ -1,10 +1,13 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useContext} from 'react'
 import SongCard from '../components/game/SongCard'
 import Timer from '../components/game/Timer'
+
+import {Context} from '../context/Context'
 
 //08/13/20 rendering song cards in correct order, but there's a strange problem with the order of the cards for the last round.
 
 const Game = ({songs, socket, setPlayingLobby}) => {
+    //state
     const [currentSongs, setCurrentSongs] = useState([])
     const [playing, setPlaying] = useState(false)
     const [round, setRound] = useState(1)
@@ -12,8 +15,14 @@ const Game = ({songs, socket, setPlayingLobby}) => {
     const [gameOver, setGameOver] = useState(false)
     const [guessed, setGuessed] = useState('')
 
+    //context
+    const { gameHashValue } = useContext(Context)
+    const { gameHash } = gameHashValue
+
+    //refs
     const audioRef = useRef(null)
-    
+
+    //functions
     const generateRandomOrdered = (currentRound) => {
         
         const choiceArray = [songs[currentRound-1].song, ...songs[currentRound-1].dummyArray]
@@ -33,17 +42,24 @@ const Game = ({songs, socket, setPlayingLobby}) => {
         if (!guessed) {
             setGuessed(songName)
         }
+        if (!guessed && playing && songName === songs[round-1].song.name) {
+            socket.emit('changeScore', {gameId: gameHash, socketId: socket.id, correctSong: songName, date: Date.now()})
+        }
     }
 
     //update timer, trigger game over, and update parent component state on game-over
     useEffect(() => {
         socket.on('timerDecrement', ({ seconds }) => {
             //what was I using socket for here?
+           
             setTimer(seconds)
         })
 
         socket.on('gameOver', () => {
-            setGameOver(true)
+            // setGameOver(true)
+            setGuessed('')
+            setRound(1)
+            setPlayingLobby(false)
         })
     }, [socket])
 
