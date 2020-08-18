@@ -7,10 +7,18 @@ import axios from 'axios'
 import { Context } from '../context/Context'
 
 //components
-import Banner from '../components/landing/Banner'
+import BannerComp from '../components/landing/Banner'
 import InfoButton from '../components/landing/InfoButton'
-import Input from '../components/landing/Input'
+import InputForm from '../components/landing/Input'
 import PlaylistCard from '../components/landing/PlaylistCard'
+
+//Material UI
+import {
+    Container,
+    Typography,
+    Grid
+} from '@material-ui/core'
+
 
 
 
@@ -18,7 +26,7 @@ const Landing = (props) => {
     const { usernameValue, gameHashValue } = useContext(Context)
     const { username, setUsername } = usernameValue
     const { gameHash, setGameHash } = gameHashValue
-    
+
     const [playlists, setPlaylists] = useState([])
     const [displayPlaylists, setDisplayPlaylists] = useState(false)
     const [joinDisplay, setJoinDisplay] = useState(false)
@@ -28,9 +36,10 @@ const Landing = (props) => {
         setGameHash(newHash)
     }
 
+
     const handleJoinGame = () => {
         if (username) {
-        setGameHash(props.match.params.gameHash)
+            setGameHash(props.match.params.gameHash)
         }
     }
 
@@ -55,15 +64,33 @@ const Landing = (props) => {
         />))
 
     return (
-        <div>
-            <Banner username={username} />
-            <Input 
-            handleJoinGame={handleJoinGame} 
-            joinDisplay={joinDisplay} 
-            username={username} 
-            setUsername={setUsername} 
-            setDisplayPlaylists={setDisplayPlaylists} 
-            />
+        <Container maxWidth='lg'>
+            <BannerComp />
+            {!displayPlaylists &&
+                <Grid container>
+                    <Grid item xs={12} sm={6} >
+                        <InputForm
+                            handleJoinGame={handleJoinGame}
+                            joinDisplay={joinDisplay}
+                            username={username}
+                            setUsername={setUsername}
+                            setDisplayPlaylists={setDisplayPlaylists}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <InfoButton title='How to Play'>This is the how to play description</InfoButton>
+                        <InfoButton title='About'>This is the about description</InfoButton>
+                    </Grid>
+                </Grid>
+            }
+            {displayPlaylists &&
+                <Container maxWidth='lg'>
+                    <Typography>Hey, {username}. Choose a playlist:</Typography>
+                    <Grid container spacing={2}>
+                        {playlistMap}
+                    </Grid>
+                </Container>}
             {gameHash && <Redirect to={{
                 pathname: '/lobby',
                 state: {
@@ -72,10 +99,7 @@ const Landing = (props) => {
                 }
             }}
             />}
-            <InfoButton title='How to Play'>This is the how to play description</InfoButton>
-            <InfoButton title='About'>This is the about description</InfoButton>
-            {displayPlaylists && playlistMap}
-        </div>
+        </Container>
     )
 }
 

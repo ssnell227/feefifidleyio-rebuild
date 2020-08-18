@@ -9,6 +9,12 @@ import InviteLink from '../components/lobby/InviteLink'
 import PlayerList from '../components/lobby/PlayerList'
 import Game from './Game'
 
+//material UI
+import {
+    Container,
+    Grid
+} from '@material-ui/core'
+
 let socket
 
 const Lobby = (props) => {
@@ -31,13 +37,15 @@ const Lobby = (props) => {
     const { gameHash } = gameHashValue
 
     const startGame = () => {
-        socket.emit('startGame')
+        if (users) {
+            socket.emit('startGame')
+        }
     }
 
 
     //mount and dismount effects
     useEffect(() => {
-        
+
         socket = io()
 
         //send the server the user's data
@@ -84,20 +92,37 @@ const Lobby = (props) => {
 
     //set songs for game
     useEffect(() => {
-        socket.on('sendSongs', ({songs}) => {
+        socket.on('sendSongs', ({ songs }) => {
             setSongs(songs)
         })
     }, [])
 
     return (
-        <div>
-            Lobby
-            <InfoDisplay startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
-            <PlayerList users={users} />
-            <Chat />
-            <InviteLink gameHash={gameHash}/>
-            {playing && <Game songs={songs} socket={socket} setPlayingLobby={setPlaying} />}
-        </div>
+        <Container>
+            <Grid container>
+                <Grid item md={4}>
+                    <PlayerList users={users} />
+                </Grid>
+                {playing &&
+                    <Grid item md={4}>
+                        <Game songs={songs} socket={socket} setPlayingLobby={setPlaying} />
+                    </Grid>
+                }
+                {!playing &&
+                    <>
+                        <Grid item md={4}>
+                            <InfoDisplay startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
+                        </Grid>
+                        <Grid item md={4}>
+                            <Chat />
+                        </Grid>
+                    </>
+                }
+            </Grid>
+            {!playing &&
+                <InviteLink gameHash={gameHash} />
+            }
+        </Container>
     )
 }
 

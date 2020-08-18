@@ -5,11 +5,17 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom'
 import * as serviceWorker from './serviceWorker';
 
+//material UI
+import {CssBaseline} from '@material-ui/core'
+
 ReactDOM.render(
   <React.StrictMode>
+    <CssBaseline>
     <BrowserRouter>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
       <App />
     </BrowserRouter>
+    </CssBaseline>
   </React.StrictMode>,
   document.getElementById('root')
 );

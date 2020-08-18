@@ -1,14 +1,24 @@
 import React from 'react'
 
+
+//material UI
+import { 
+    Typography, 
+    Accordion,
+    AccordionSummary
+} from '@material-ui/core'
+
 const InfoButton = ({ children, title }) => (
-    <div>
-        <div>
-            {title}
-        </div>
-        <div>
-            {children}
-        </div>
-    </div>
-)
+        <Accordion>
+            <AccordionSummary>
+                <Typography>
+                    {title}
+                </Typography>
+            </AccordionSummary>
+                <Typography>
+                    {children}
+                </Typography>
+        </Accordion>
+    )
 
 export default InfoButton

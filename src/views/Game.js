@@ -4,6 +4,12 @@ import Timer from '../components/game/Timer'
 
 import {Context} from '../context/Context'
 
+//Material UI
+import {
+    Container,
+    Grid
+} from '@material-ui/core'
+
 //08/13/20 rendering song cards in correct order, but there's a strange problem with the order of the cards for the last round.
 
 const Game = ({songs, socket, setPlayingLobby}) => {
@@ -110,11 +116,13 @@ const Game = ({songs, socket, setPlayingLobby}) => {
     ))
 
     return (
-        <div>
+        <Container>
             <Timer timer={timer}/>
+            <Grid container spacing={2}>
             {songsMap}
+            </Grid>
             <audio ref={audioRef} preload='auto' src={round -1 >= 0 && songs[round-1].song.preview_url}/>
-        </div>
+        </Container>
     )
 }
 

@@ -1,10 +1,19 @@
 import React from 'react'
 
-const InviteLink = ({gameHash}) => (
-    <div>
-        <span>Invite your friends:</span>
-    <p>{`localhost:3000/landing/${gameHash}`}</p>
-    </div>
+//Material UI
+import {
+    AppBar,
+    Typography,
+    Toolbar
+} from '@material-ui/core'
+
+const InviteLink = ({ gameHash }) => (
+    <AppBar position='static'>
+        <Toolbar>
+            <Typography>Invite your friends:</Typography>
+            <Typography variant='h3'> {`localhost:3000/landing/${gameHash}`}</Typography>
+        </Toolbar>
+    </AppBar>
 )
 
 export default InviteLink

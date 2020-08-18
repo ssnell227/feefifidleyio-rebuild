@@ -1,9 +1,10 @@
 import React from 'react'
+import {Typography} from '@material-ui/core'
 
-const Banner = ({username}) => (
-    <div>
+const BannerComp = () => (
+    <Typography variant='h1'>
         FeeFiFidley.io
-    </div>
+    </Typography>
 )
 
-export default Banner
+export default BannerComp

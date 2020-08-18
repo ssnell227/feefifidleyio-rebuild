@@ -1,19 +1,45 @@
 import React from 'react'
 
-const Input = ({username, setUsername, setDisplayPlaylists, joinDisplay, handleJoinGame}) => (
-    <div>
-        <p>Enter a username:</p>
-        <input onChange={(e) => {
-            e.preventDefault()
-            setUsername(e.target.value)
-        }}/>
-        {joinDisplay && <button onClick={() => handleJoinGame()}>
-            Join game
-        </button>}
-        {!joinDisplay && <button onClick={() => username ? setDisplayPlaylists(true): null}>
-            New game
-        </button>}
-    </div>
+//Material UI
+import {
+    Container,
+    InputAdornment,
+    InputLabel,
+    FormControl,
+    Input,
+    Button
+} from '@material-ui/core'
+
+import {
+    AccountCircle
+} from '@material-ui/icons'
+
+const InputForm = ({ username, setUsername, setDisplayPlaylists, joinDisplay, handleJoinGame }) => (
+    <Container>
+        <form>
+        <FormControl>
+            <InputLabel htmlFor='username-field'>Enter a username:</InputLabel>
+            <Input
+                id='username-field'
+                startAdornment={
+                    <InputAdornment position='start'>
+                        <AccountCircle />
+                    </InputAdornment>
+                }
+                onChange={(e) => {
+                    e.preventDefault()
+                    setUsername(e.target.value)
+                }}
+            />
+        </FormControl>
+            {joinDisplay && <Button type='submit' onClick={() => handleJoinGame()}>
+                Join game
+        </Button>}
+            {!joinDisplay && <Button type='submit' onClick={() => username ? setDisplayPlaylists(true) : null}>
+                New game
+        </Button>}
+        </form>
+    </Container>
 )
 
-export default Input
+export default InputForm
