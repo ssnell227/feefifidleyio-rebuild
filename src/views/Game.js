@@ -7,10 +7,18 @@ import {Context} from '../context/Context'
 //Material UI
 import {
     Container,
-    Grid
+    Grid,
+    makeStyles
 } from '@material-ui/core'
 
-//08/13/20 rendering song cards in correct order, but there's a strange problem with the order of the cards for the last round.
+const useStyles = makeStyles((theme) => ({
+    correct: {
+        border: '5px solid green'
+    },
+    incorrect: {
+        border: '5px solid red'
+    }
+}))
 
 const Game = ({songs, socket, setPlayingLobby}) => {
     //state
@@ -27,6 +35,9 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
     //refs
     const audioRef = useRef(null)
+
+    //Material UI
+    const classes = useStyles()
 
     //functions
     const generateRandomOrdered = (currentRound) => {
@@ -107,7 +118,7 @@ const Game = ({songs, socket, setPlayingLobby}) => {
     const songsMap = currentSongs.map((song, index) => (
         <SongCard 
         handleSetGuessed={handleSetGuessed}
-        classStr={`gameCard ${guessed && song.correct ? 'correct' : null} ${guessed && !song.correct && guessed === song.name ? 'incorrect' : null}`}
+        classStr={guessed && song.correct ? classes.correct : null + guessed && !song.correct && guessed === song.name ? classes.incorrect : null}
         key={index+'song'}
         name={song.name} 
         imgURL={song.album.images[0].url} 
