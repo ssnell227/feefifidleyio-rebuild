@@ -11,7 +11,7 @@ const InviteLink = ({ gameHash }) => (
     <AppBar position='static'>
         <Toolbar>
             <Typography>Invite your friends:</Typography>
-            <Typography variant='h3'> {`localhost:3000/landing/${gameHash}`}</Typography>
+            <Typography variant='h4'> {`localhost:3000/landing/${gameHash}`}</Typography>
         </Toolbar>
     </AppBar>
 )

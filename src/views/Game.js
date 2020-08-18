@@ -1,14 +1,15 @@
-import React, {useState, useEffect, useRef, useContext} from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import SongCard from '../components/game/SongCard'
 import Timer from '../components/game/Timer'
 
-import {Context} from '../context/Context'
+import { Context } from '../context/Context'
 
 //Material UI
 import {
     Container,
     Grid,
-    makeStyles
+    makeStyles,
+    Typography
 } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Game = ({songs, socket, setPlayingLobby}) => {
+const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     //state
     const [currentSongs, setCurrentSongs] = useState([])
     const [playing, setPlaying] = useState(false)
@@ -41,8 +42,8 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
     //functions
     const generateRandomOrdered = (currentRound) => {
-        
-        const choiceArray = [songs[currentRound-1].song, ...songs[currentRound-1].dummyArray]
+
+        const choiceArray = [songs[currentRound - 1].song, ...songs[currentRound - 1].dummyArray]
         const availableIndices = choiceArray.map((i, index) => index)
         const shuffledArray = new Array(4)
 
@@ -51,7 +52,7 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
             shuffledArray.splice(availableIndices.splice(randomIndex, 1), 1, item)
         })
-        
+
         setCurrentSongs(shuffledArray)
     }
 
@@ -59,8 +60,8 @@ const Game = ({songs, socket, setPlayingLobby}) => {
         if (!guessed) {
             setGuessed(songName)
         }
-        if (!guessed && playing && songName === songs[round-1].song.name) {
-            socket.emit('changeScore', {gameId: gameHash, socketId: socket.id, correctSong: songName, date: Date.now()})
+        if (!guessed && playing && songName === songs[round - 1].song.name) {
+            socket.emit('changeScore', { gameId: gameHash, socketId: socket.id, correctSong: songName, date: Date.now() })
         }
     }
 
@@ -68,23 +69,24 @@ const Game = ({songs, socket, setPlayingLobby}) => {
     useEffect(() => {
         socket.on('timerDecrement', ({ seconds }) => {
             //what was I using socket for here?
-           
+
             setTimer(seconds)
         })
 
-        socket.on('gameOver', () => {
-            // setGameOver(true)
+        socket.on('gameOver', ({winner}) => {
+            setGameOver(true)
             setGuessed('')
             setRound(1)
-            setPlayingLobby(false)
+            setWinner(winner.username)
+            setTimeout(() => setPlayingLobby(false), 2000)
         })
     }, [socket])
 
     //switches between song playing countdown and get ready countdown
     useEffect(() => {
-        socket.on('switchMode', ({currentRound, roomPlaying}) => {
+        socket.on('switchMode', ({ currentRound, roomPlaying }) => {
             console.log('switch mode')
-            
+
             setPlaying(roomPlaying)
             setRound(currentRound)
         })
@@ -92,22 +94,23 @@ const Game = ({songs, socket, setPlayingLobby}) => {
 
     //updates the round and creates the next round's list of songs
     useEffect(() => {
-        
+
         socket.on('nextRound', () => {
             // console.log(currentRound, 'round from server')
             // setRound(currentRound)
-            
+
             console.log(round, 'round from state')
             if (round <= songs.length) {
                 setGuessed('')
                 generateRandomOrdered(round)
             }
-        }) 
+        })
     }, [round, socket, songs])
 
+    //controls audio component playback
     useEffect(() => {
         if (playing && !gameOver) {
-            audioRef.current.play() 
+            audioRef.current.play()
         } else {
             audioRef.current.pause()
         }
@@ -116,23 +119,30 @@ const Game = ({songs, socket, setPlayingLobby}) => {
     //function to take in full list of songs for the game and set state to a randomly ordered set of songs for a single round
 
     const songsMap = currentSongs.map((song, index) => (
-        <SongCard 
-        handleSetGuessed={handleSetGuessed}
-        classStr={guessed && song.correct ? classes.correct : null + guessed && !song.correct && guessed === song.name ? classes.incorrect : null}
-        key={index+'song'}
-        name={song.name} 
-        imgURL={song.album.images[0].url} 
-        artist={song.artists[0].name}
+        <SongCard
+            handleSetGuessed={handleSetGuessed}
+            classStr={guessed && song.correct ? classes.correct : null + guessed && !song.correct && guessed === song.name ? classes.incorrect : null}
+            key={index + 'song'}
+            name={song.name}
+            imgURL={song.album.images[0].url}
+            artist={song.artists[0].name}
         />
     ))
 
     return (
         <Container>
-            <Timer timer={timer}/>
-            <Grid container spacing={2}>
-            {songsMap}
-            </Grid>
-            <audio ref={audioRef} preload='auto' src={round -1 >= 0 && songs[round-1].song.preview_url}/>
+            {gameOver &&
+            <Typography>{winner} won!</Typography>
+            }
+            {!gameOver &&
+                <>
+                    <Timer timer={timer} />
+                    <Grid container spacing={2}>
+                        {songsMap}
+                    </Grid>
+                </>
+            }
+            <audio ref={audioRef} preload='auto' src={round - 1 >= 0 && songs[round - 1].song.preview_url} />
         </Container>
     )
 }

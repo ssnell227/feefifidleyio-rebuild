@@ -29,6 +29,7 @@ const Lobby = (props) => {
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
     const [songs, setSongs] = useState([])
+    const [winner, setWinner] = useState('')
 
 
     //context
@@ -71,19 +72,8 @@ const Lobby = (props) => {
 
     //room data functions
     useEffect(() => {
-        socket.on('roomData', ({ room }) => {
-            const { users } = room
-            console.log(users)
-            try {
-                const sortedUsers = users.map(user => {
-                    const userScore = user.score.map(item => 1 + 1 / (item.date % 100000))
-                    return { username: user.username, userScore }
-                }).sort((a, b) => b.userScore - a.userScore)
-
-                setUsers(sortedUsers)
-            } catch {
-                setUsers(users)
-            }
+        socket.on('roomData', ({ room: {users} }) => {
+            setUsers(users)
             if (loading) {
                 setLoading(false)
             }
@@ -101,17 +91,17 @@ const Lobby = (props) => {
         <Container>
             <Grid container>
                 <Grid item md={4}>
-                    <PlayerList users={users} />
+                    <PlayerList playing={playing} users={users} />
                 </Grid>
                 {playing &&
                     <Grid item md={4}>
-                        <Game songs={songs} socket={socket} setPlayingLobby={setPlaying} />
+                        <Game winner={winner} setWinner={setWinner} songs={songs} socket={socket} setPlayingLobby={setPlaying} />
                     </Grid>
                 }
                 {!playing &&
                     <>
                         <Grid item md={4}>
-                            <InfoDisplay startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
+                            <InfoDisplay winner={winner} startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
                         </Grid>
                         <Grid item md={4}>
                             <Chat />

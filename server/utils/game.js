@@ -1,14 +1,14 @@
 require('dotenv').config()
-const {LOCAL_HOST, SERVER_PORT} = process.env
+const { LOCAL_HOST, SERVER_PORT } = process.env
 const axios = require('axios')
 const CronJob = require('cron').CronJob
 
 const rooms = []
 
-const rounds = 4;
+const rounds = 2;
 const dummySongs = 3
 const getReadySeconds = 3
-const gameSeconds = 10
+const gameSeconds = 5
 
 const getRandomSong = (tracksArray) => {
     let randomIndex = Math.floor(Math.random() * tracksArray.length - 1)
@@ -16,11 +16,7 @@ const getRandomSong = (tracksArray) => {
 }
 
 const calculateWinner = (userArray) => {
-    const winner = userArray.map(user => {
-        const userScore = user.score.map(item => 1 + 1 / (item.date % 100000))
-        return { username: user.username, userScore }
-    }).sort((a, b) => b.userScore - a.userScore)[0]
-    return winner.username
+    return userArray.sort((a, b) => b.score - a.score)[0]
 }
 
 const runGame = async (io, gameId) => {
@@ -28,7 +24,6 @@ const runGame = async (io, gameId) => {
     const currentRoom = getRoom(gameId)
     currentRoom.counter = getReadySeconds
 
-    console.log('game running')
 
     const getReadyTimer = new CronJob('*/1 * * * * *', () => {
         if (!getUsersInRoom(gameId)) {
@@ -38,7 +33,7 @@ const runGame = async (io, gameId) => {
             currentRoom.counter--
         } else if (currentRoom.counter <= 0) {
             getReadyTimer.stop()
-            io.in(gameId).emit('switchMode', {currentRound:currentRoom.currentRound, roomPlaying: true})
+            io.in(gameId).emit('switchMode', { currentRound: currentRoom.currentRound, roomPlaying: true })
             currentRoom.counter = gameSeconds
             io.in(gameId).emit('nextRound')
             io.in(gameId).emit('timerDecrement', { seconds: currentRoom.counter })
@@ -47,7 +42,7 @@ const runGame = async (io, gameId) => {
         }
     })
 
-    const gamePlayTimer = new CronJob('*/1 * * * * *', () => {
+    const gamePlayTimer = new CronJob('*/1 * * * * *', async () => {
         if (!getUsersInRoom(gameId)) {
             return gamePlayTimer.stop()
         } else if (currentRoom.counter > 0) {
@@ -55,21 +50,25 @@ const runGame = async (io, gameId) => {
             currentRoom.counter--
         } else if (currentRoom.currentRound >= rounds) {
             gamePlayTimer.stop()
-            
-            const userList = currentRoom.users.map(user => user.username).join('#')
-            
-            const songList = currentRoom.gameObjs.map(round => round.song.name).join('#')
-            
-            // const winner = calculateWinner(currentRoom.users)
-            // io.in(gameId).emit('gameOver', {winner})
-            return 
+            const winner = calculateWinner(currentRoom.users)
+            io.in(gameId).emit('gameOver', { winner })
 
-        }  else if (currentRoom.counter <= 0) {
+            //reset stuff after game is over to allow play again
+            currentRoom.playing = false
+            currentRoom.currentRound = 1
+            currentRoom.counter = 0
+            currentRoom.users.forEach(user => user.score = 0)
+            currentRoom.gameObjs = await getGameSongs(currentRoom.spotifyId)
+            io.in(gameId).emit('sendSongs', { songs: currentRoom.gameObjs })
+            io.in(gameId).emit('roomData', {room: currentRoom})
+            return
+
+        } else if (currentRoom.counter <= 0) {
             gamePlayTimer.stop()
             currentRoom.currentRound++
             currentRoom.counter = getReadySeconds
-            
-            io.in(gameId).emit('switchMode', {currentRound:currentRoom.currentRound, roomPlaying: false})
+
+            io.in(gameId).emit('switchMode', { currentRound: currentRoom.currentRound, roomPlaying: false })
             io.in(gameId).emit('timerDecrement', { seconds: currentRoom.counter })
             currentRoom.counter--
             getReadyTimer.start()
@@ -85,9 +84,8 @@ const changeScore = ({ gameId, socketId, date }) => {
 
     const user = users.find(user => user.socketId === socketId)
 
-    user.score += 1+ 1/(date % 100000)
-    
-    console.log(user)
+    user.score += 1 + 1 / (date % 100000)
+
 
     //create better way to keep track of score here
     // if (!user.score.includes(correctSong)) {
@@ -101,37 +99,41 @@ const getRoom = (gameId) => {
     return rooms.find(item => item.gameId === gameId)
 }
 
-const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, playlistImg }, socketId, io) => {
+const getGameSongs = async (spotifyId) => {
+    
 
     const { data } = await axios.post(`http://${LOCAL_HOST}:${SERVER_PORT}/api/spotify/getPlaylistItems`, { spotifyId })
         .catch(err => console.log(err))
 
     const withPreview = data.map(item => item.track).filter(item => item.preview_url)
 
+    const songsArrayCopy = [...withPreview]
+    const gameSongs = []
+    const gameObjs = []
+
+    for (let i = 0; i < rounds; i++) {
+        gameSongs.push(getRandomSong(songsArrayCopy)[0])
+    }
+
+    gameSongs.forEach(song => {
+        const dummyArray = []
+        song.correct = true
+        for (let i = 0; i < dummySongs; i++) {
+            dummyArray.push(getRandomSong(songsArrayCopy)[0])
+        }
+        dummyArray.forEach(item => item.correct = false)
+        gameObjs.push({ song, dummyArray })
+    })
+
+    return gameObjs
+}
+
+const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, playlistImg }, socketId, io) => {
+
+    
+
 
     //use getRandomSong to pull the 5 game tracks with 3 dummy tracks each for gameplay
-
-    const getGameSongs = (songsArray) => {
-        const songsArrayCopy = [...songsArray]
-        const gameSongs = []
-        const gameObjs = []
-
-        for (let i = 0; i < rounds; i++) {
-            gameSongs.push(getRandomSong(songsArrayCopy)[0])
-        }
-
-        gameSongs.forEach(song => {
-            const dummyArray = []
-            song.correct = true
-            for (let i = 0; i < dummySongs; i++) {
-                dummyArray.push(getRandomSong(songsArrayCopy)[0])
-            }
-            dummyArray.forEach(item => item.correct = false)
-            gameObjs.push({ song, dummyArray })
-        })
-
-        return gameObjs
-    }
 
     rooms.push({
         gameId,
@@ -139,7 +141,7 @@ const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, 
         playlistName,
         spotifyId,
         playlistImg,
-        gameObjs: getGameSongs(withPreview),
+        gameObjs: await getGameSongs(spotifyId),
         playing: false,
         currentRound: 1,
         counter: 0
@@ -152,7 +154,6 @@ const addRoom = async ({ username, gameId, playlistName, playlistId, spotifyId, 
 const removeRoom = (gameId) => {
     const index = rooms.findIndex(item => item.gameId === gameId)
     rooms.splice(index, 1)
-    console.log(rooms)
 }
 
 //user functions
@@ -166,7 +167,7 @@ const addUser = ({ gameId, username, socketId }, io) => {
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
 }
 
-const removeUser = (gameId, socketId ) => {
+const removeUser = (gameId, socketId) => {
     try {
         const users = rooms.find(item => item.gameId === gameId).users
 

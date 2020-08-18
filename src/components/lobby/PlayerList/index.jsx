@@ -9,11 +9,13 @@ import {
 
 } from '@material-ui/core'
 
-const PlayerList = ({ users }) => {
+const PlayerList = ({ users, playing }) => {
     const usersMap = users.sort((a, b) => b.score - a.score).map((user, index) => (
         <Grid container item key={index}>
             <Avatar>{user.username && user.username.slice(0, 1)}</Avatar>
-            <Typography>{Math.floor(user.score)}</Typography>
+            {playing &&
+                <Typography>{Math.floor(user.score)}</Typography>
+            }
         </Grid>
     ))
     return (

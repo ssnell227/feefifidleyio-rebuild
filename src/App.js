@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import Routes from './routes'
-import './sass/App.scss'
 import { Context } from './context/Context'
 import {withRouter} from 'react-router-dom'
 
