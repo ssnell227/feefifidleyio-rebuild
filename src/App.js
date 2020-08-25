@@ -3,8 +3,6 @@ import Routes from './routes'
 import { Context } from './context/Context'
 import {withRouter} from 'react-router-dom'
 
-import Nav from './views/Nav'
-
 
 
 function App() {
@@ -15,7 +13,6 @@ function App() {
   return (
     <div className="App">
       <Context.Provider value={{usernameValue, gameHashValue}}>
-        <Nav/>
         {Routes}
       </Context.Provider>
     </div>

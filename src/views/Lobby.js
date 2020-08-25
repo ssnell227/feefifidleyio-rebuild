@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react'
 import io from 'socket.io-client'
 import { Context } from '../context/Context'
+import {Link} from 'react-router-dom'
 
 //components
-import Chat from '../components/lobby/Chat'
+import Chat from './Chat'
 import InfoDisplay from '../components/lobby/InfoDisplay'
 import InviteLink from '../components/lobby/InviteLink'
 import PlayerList from '../components/lobby/PlayerList'
@@ -12,8 +13,12 @@ import Game from './Game'
 //material UI
 import {
     Container,
-    Grid
+    Grid,
+    IconButton
 } from '@material-ui/core'
+
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+
 
 let socket
 
@@ -27,7 +32,7 @@ const Lobby = (props) => {
     //state
     const [playing, setPlaying] = useState(false)
     const [users, setUsers] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [songs, setSongs] = useState([])
     const [winner, setWinner] = useState('')
 
@@ -35,7 +40,7 @@ const Lobby = (props) => {
     //context
     const { usernameValue, gameHashValue } = useContext(Context)
     const { username } = usernameValue
-    const { gameHash } = gameHashValue
+    const { gameHash, setGameHash } = gameHashValue
 
     const startGame = () => {
         if (users) {
@@ -72,7 +77,7 @@ const Lobby = (props) => {
 
     //room data functions
     useEffect(() => {
-        socket.on('roomData', ({ room: {users} }) => {
+        socket.on('roomData', ({ room: { users } }) => {
             setUsers(users)
             if (loading) {
                 setLoading(false)
@@ -90,7 +95,7 @@ const Lobby = (props) => {
     return (
         <Container>
             <Grid container>
-                <Grid item md={4}>
+                <Grid item md={3}>
                     <PlayerList playing={playing} users={users} />
                 </Grid>
                 {playing &&
@@ -104,10 +109,17 @@ const Lobby = (props) => {
                             <InfoDisplay winner={winner} startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
                         </Grid>
                         <Grid item md={4}>
-                            <Chat />
+                            <Chat loading={loading} socket={socket} />
                         </Grid>
                     </>
                 }
+                <Grid item md={1}>
+                    <IconButton>
+                        <Link onClick={() => setGameHash(null)} to='/landing'>
+                            <ArrowBackIcon />
+                        </Link>
+                    </IconButton>
+                </Grid>
             </Grid>
             {!playing &&
                 <InviteLink gameHash={gameHash} />

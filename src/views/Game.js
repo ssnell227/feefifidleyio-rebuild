@@ -73,14 +73,14 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
             setTimer(seconds)
         })
 
-        socket.on('gameOver', ({winner}) => {
+        socket.on('gameOver', ({ winner }) => {
             setGameOver(true)
             setGuessed('')
             setRound(1)
             setWinner(winner.username)
             setTimeout(() => setPlayingLobby(false), 2000)
         })
-    }, [socket])
+    }, [socket, setWinner, setPlayingLobby])
 
     //switches between song playing countdown and get ready countdown
     useEffect(() => {
@@ -121,7 +121,11 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     const songsMap = currentSongs.map((song, index) => (
         <SongCard
             handleSetGuessed={handleSetGuessed}
-            classStr={guessed && song.correct ? classes.correct : null + guessed && !song.correct && guessed === song.name ? classes.incorrect : null}
+            classStr={
+                !playing && song.correct ? classes.correct : null
+                    + guessed && song.correct ? classes.correct : null
+                        + guessed && !song.correct && guessed === song.name ? classes.incorrect : null
+            }
             key={index + 'song'}
             name={song.name}
             imgURL={song.album.images[0].url}
@@ -132,7 +136,7 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     return (
         <Container>
             {gameOver &&
-            <Typography>{winner} won!</Typography>
+                <Typography>{winner} won!</Typography>
             }
             {!gameOver &&
                 <>

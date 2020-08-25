@@ -51,6 +51,10 @@ module.exports = function (io) {
                     removeRoom(gameId)
                 }
             })
+            //chat feature
+            socket.on('sendMessage', (message) => {
+                io.in(gameId).emit('newMessage', message)
+            })
         })
     })
 } 
