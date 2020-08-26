@@ -1,10 +1,21 @@
 import React from 'react'
-import {Typography} from '@material-ui/core'
+import {
+    Typography,
+    Container,
+    Box
+} from '@material-ui/core'
 
 const BannerComp = () => (
-    <Typography variant='h1'>
-        FeeFiFidley.io
-    </Typography>
+    <Container >
+        <Typography align='center' variant='h1'>
+            FeeFiFidley.io
+        </Typography>
+        <Box>
+            <Typography align='center' variant='h3'>
+                A real-time, multiplayer music guessing game
+            </Typography>
+        </Box>
+    </Container>
 )
 
 export default BannerComp

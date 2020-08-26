@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import io from 'socket.io-client'
 import { Context } from '../context/Context'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 //components
 import Chat from './Chat'
@@ -14,15 +14,26 @@ import Game from './Game'
 import {
     Container,
     Grid,
-    IconButton
+    IconButton,
+    Box
 } from '@material-ui/core'
+
+import {makeStyles} from '@material-ui/styles'
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 
+const useStyles = makeStyles(() => ({
+    imageClass:{
+        width: '300px'
+    }
+}))
+
 let socket
 
 const Lobby = (props) => {
+    const classes = useStyles()
+
     const {
         playlist_name: playlistName,
         spotify_id: spotifyId,
@@ -94,8 +105,13 @@ const Lobby = (props) => {
 
     return (
         <Container>
-            <Grid container>
-                <Grid item md={3}>
+            <Link onClick={() => setGameHash(null)} to='/landing'>
+                        <IconButton>
+                            <ArrowBackIcon />
+                        </IconButton>
+                    </Link>
+            <Grid container spacing={4}>
+                <Grid item md={4}>
                     <PlayerList playing={playing} users={users} />
                 </Grid>
                 {playing &&
@@ -106,20 +122,14 @@ const Lobby = (props) => {
                 {!playing &&
                     <>
                         <Grid item md={4}>
-                            <InfoDisplay winner={winner} startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
+                            <InfoDisplay imageClass={classes.imageClass} winner={winner} startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
                         </Grid>
                         <Grid item md={4}>
                             <Chat loading={loading} socket={socket} />
                         </Grid>
                     </>
                 }
-                <Grid item md={1}>
-                    <IconButton>
-                        <Link onClick={() => setGameHash(null)} to='/landing'>
-                            <ArrowBackIcon />
-                        </Link>
-                    </IconButton>
-                </Grid>
+                
             </Grid>
             {!playing &&
                 <InviteLink gameHash={gameHash} />

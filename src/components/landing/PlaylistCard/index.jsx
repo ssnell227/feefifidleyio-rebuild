@@ -1,17 +1,20 @@
 import React from 'react'
 
 //Material UI
-import { 
-    Card, 
-    Grid, 
-    CardMedia 
+import {
+    Card,
+    Grid,
+    CardMedia,
+    CardActionArea,
+    Typography
 } from '@material-ui/core'
 
 const PlaylistDisplay = ({ name, imgURL, spotifyId, handleChoosePlaylist }) => (
-    <Grid item>
+    <Grid item xs={12} sm={6} md={4}>
         <Card onClick={() => handleChoosePlaylist(spotifyId)}>
-            <CardMedia component='img' src={imgURL} title={name} />
-            <p>{name}</p>
+            <CardActionArea>
+                <CardMedia component='img' src={imgURL} title={name} />
+            </CardActionArea>
         </Card>
     </Grid>
 )

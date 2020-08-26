@@ -25,8 +25,7 @@ import {
     Container,
     Typography,
     Grid,
-    IconButton,
-    Box
+    IconButton
 } from '@material-ui/core'
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -71,10 +70,13 @@ const Landing = (props) => {
 
     return (
         <Container maxWidth='md' >
-            <BannerComp />
-            {!displayPlaylists &&
-                <Grid container spacing='5' justify='space-between'>
-                    <Grid  item xs={12} sm={6} >
+            <Grid container direction='column' spacing={5}>
+                <Grid item>
+                    <BannerComp />
+                </Grid>
+                {!displayPlaylists &&
+                    <Grid item container spacing={5} justify='space-between'>
+                        <Grid item xs={12} sm={6} >
                             <InputForm
                                 handleJoinGame={handleJoinGame}
                                 joinDisplay={joinDisplay}
@@ -82,24 +84,34 @@ const Landing = (props) => {
                                 setUsername={setUsername}
                                 setDisplayPlaylists={setDisplayPlaylists}
                             />
-                    </Grid >
-                    <Grid item xs={12} sm={6} >
-                        <InfoButton title='How to Play' > This is the how to play description </InfoButton>
-                        <InfoButton title='About' > This is the about description </InfoButton>
-                    </Grid >
-                </Grid>
-            }
-            {displayPlaylists &&
-                <Container maxWidth='lg' >
-                    <Typography > Hey, {username}.Choose a playlist:</Typography>
-                    <IconButton>
-                        <ArrowBackIcon onClick={() => setDisplayPlaylists(false)} />
-                    </IconButton>
-                    <Grid container spacing={2} >
-                        {playlistMap}
+                        </Grid >
+                        <Grid item xs={12} sm={6} >
+                            <InfoButton title='How to Play' > This is the how to play description </InfoButton>
+                            <InfoButton title='About' > This is the about description </InfoButton>
+                        </Grid >
                     </Grid>
-                </Container >
-            } {gameHash &&
+                }
+                <Grid item>
+                    {displayPlaylists &&
+                        <Container maxWidth='md' >
+                            <Grid container >
+                                <Grid item xs={1}>
+                                    <IconButton onClick={() => setDisplayPlaylists(false)}>
+                                        <ArrowBackIcon  />
+                                    </IconButton>
+                                </Grid>
+                                <Grid item xs={11}>
+                                    <Typography align='center' variant='h4' > Hey, {username}. Choose a playlist:</Typography>
+                                </Grid>
+                                <Grid xs={12} item container justify='center' spacing={2} >
+                                    {playlistMap}
+                                </Grid>
+                            </Grid>
+                        </Container >
+                    }
+                </Grid>
+            </Grid>
+            {gameHash &&
                 < Redirect to={
                     {
                         pathname: '/lobby',

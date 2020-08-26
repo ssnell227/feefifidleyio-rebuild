@@ -2,21 +2,32 @@ import React from 'react'
 
 //Material UI
 import {
-    Container,
+    Box,
     Typography,
     Button,
     CardMedia,
 } from '@material-ui/core'
 
-const InfoDisplay = ({ playlistName, playlistImg, startGame, winner }) => (
-    <Container>
-        <Typography variant='h2'>{playlistName}</Typography>
+const InfoDisplay = ({ imageClass, playlistName, playlistImg, startGame, winner }) => (
+    <Box
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        border={1}
+        borderRadius='borderRadius'
+    >
         {winner &&
-            <Typography>{winner} won last time, try and beat 'em?</Typography>
+            <Typography align='center'>{winner} won last time, try and beat 'em?</Typography>
         }
-        <CardMedia title={playlistName} component='img' src={playlistImg} />
-        <Button onClick={() => startGame()}>Play</Button>
-    </Container>
+        <CardMedia className={imageClass} title={playlistName} component='img' src={playlistImg} />
+        <Button
+            color='primary'
+            variant='contained'
+            onClick={() => startGame()}
+        >
+            Play
+        </Button>
+    </Box>
 )
 
 export default InfoDisplay

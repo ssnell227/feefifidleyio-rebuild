@@ -4,14 +4,17 @@ import React from 'react'
 import {
     AppBar,
     Typography,
-    Toolbar
+    Toolbar,
+    Box
 } from '@material-ui/core'
 
 const InviteLink = ({ gameHash }) => (
     <AppBar position='static'>
         <Toolbar>
-            <Typography>Invite your friends:</Typography>
-            <Typography variant='h4'> {`localhost:3000/landing/${gameHash}`}</Typography>
+            <Box>
+                <Typography>Invite your friends:</Typography>
+                <Typography variant='h4'> {`localhost:3000/landing/${gameHash}`}</Typography>
+            </Box>
         </Toolbar>
     </AppBar>
 )
