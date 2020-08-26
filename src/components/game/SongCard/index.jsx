@@ -6,14 +6,19 @@ import {
     Card,
     CardMedia,
     Typography,
+    CardActionArea,
+    List,
+    ListItem
 } from '@material-ui/core'
 
-const SongCard = ({ name, imgURL, artist, handleSetGuessed, classStr }) => (
+const SongCard = ({ name, imgURL, artist, handleSetGuessed, borderClassStr, classStr }) => (
     <Grid item xs={12} md={6} onClick={() => handleSetGuessed(name)}>
-        <Card className={classStr} >
-            <Typography>{name}</Typography>
-            <Typography>{artist}</Typography>
-            <CardMedia component='img' src={imgURL} title={name} />
+        <Card className={borderClassStr + ' ' + classStr} >
+            <CardActionArea>
+                <CardMedia component='img' src={imgURL} title={name} />
+                <Typography variant='body2' component='h2'   align='center'>{name}</Typography>
+                <Typography variant='h6' component='h1'align='center'>{artist}</Typography>
+            </CardActionArea>
         </Card>
     </Grid>
 )

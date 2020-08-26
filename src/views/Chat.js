@@ -17,15 +17,18 @@ import {
 
 const useStyles = makeStyles(() => ({
     chatRight: {
-        position: 'absolute',
-        right: '0px'
+        textAlign: 'right'
     },
     chatLeft: {
-        position: 'absolute',
-        left: '100px'
+        textAlign: 'left'
     },
     chatBox: {
         overflowY: 'scroll'
+    },
+    chatMessage: {
+        width: '280px',
+        maxWidth: '280px',
+        overflowWrap: 'break-word'
     }
 }))
 
@@ -72,12 +75,12 @@ const Chat = ({ socket, loading }) => {
     }
 
     const messagesMap = messages.sort((a, b) => a.date - b.date).map((item, index) => 
-        <ChatMessage  messageClass={item.username === username ? classes.chatRight : classes.chatLeft} key={`message-${item.date}`}  message={item} />
+        <ChatMessage messageClass={classes.chatMessage}  messageUserClass={item.username === username ? classes.chatRight : classes.chatLeft} key={`message-${item.date}`}  message={item} />
     )
 
     return (
-        <Box border={1} borderRadius='borderRadius' p={2} position='relative' height='100%'>
-            <Box ref={chatRef} height='85%' className={classes.chatBox}>
+        <Box border={1} borderRadius='borderRadius' p={2} position='relative' height={400}>
+            <Box ref={chatRef} max-height='85%' height='85%' className={classes.chatBox}>
                 <List >
                     {messagesMap}
                 </List>

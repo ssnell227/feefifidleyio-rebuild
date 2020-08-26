@@ -18,13 +18,13 @@ import {
     Box
 } from '@material-ui/core'
 
-import {makeStyles} from '@material-ui/styles'
+import { makeStyles } from '@material-ui/styles'
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 
 const useStyles = makeStyles(() => ({
-    imageClass:{
+    imageClass: {
         width: '300px'
     }
 }))
@@ -106,30 +106,30 @@ const Lobby = (props) => {
     return (
         <Container>
             <Link onClick={() => setGameHash(null)} to='/landing'>
-                        <IconButton>
-                            <ArrowBackIcon />
-                        </IconButton>
-                    </Link>
+                <IconButton>
+                    <ArrowBackIcon />
+                </IconButton>
+            </Link>
             <Grid container spacing={4}>
                 <Grid item md={4}>
                     <PlayerList playing={playing} users={users} />
                 </Grid>
                 {playing &&
-                    <Grid item md={4}>
+                    <Grid item md={8}>
                         <Game winner={winner} setWinner={setWinner} songs={songs} socket={socket} setPlayingLobby={setPlaying} />
                     </Grid>
                 }
                 {!playing &&
                     <>
                         <Grid item md={4}>
-                            <InfoDisplay imageClass={classes.imageClass} winner={winner} startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
+                                <InfoDisplay imageClass={classes.imageClass} winner={winner} startGame={startGame} playlistName={playlistName} playlistImg={playlistImg} />
                         </Grid>
                         <Grid item md={4}>
                             <Chat loading={loading} socket={socket} />
                         </Grid>
                     </>
                 }
-                
+
             </Grid>
             {!playing &&
                 <InviteLink gameHash={gameHash} />

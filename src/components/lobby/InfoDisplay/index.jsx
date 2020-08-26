@@ -13,8 +13,10 @@ const InfoDisplay = ({ imageClass, playlistName, playlistImg, startGame, winner 
         display='flex'
         flexDirection='column'
         alignItems='center'
+        justifyContent='space-around'
         border={1}
         borderRadius='borderRadius'
+        height= {400}
     >
         {winner &&
             <Typography align='center'>{winner} won last time, try and beat 'em?</Typography>

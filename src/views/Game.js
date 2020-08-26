@@ -9,7 +9,8 @@ import {
     Container,
     Grid,
     makeStyles,
-    Typography
+    Typography,
+    Box
 } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
@@ -18,6 +19,16 @@ const useStyles = makeStyles((theme) => ({
     },
     incorrect: {
         border: '5px solid red'
+    },
+    cardStyles: {
+        width: '200px',
+        height: '300px'
+    },
+    timer: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: "translate(-50%, -50%)"
     }
 }))
 
@@ -121,11 +132,12 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     const songsMap = currentSongs.map((song, index) => (
         <SongCard
             handleSetGuessed={handleSetGuessed}
-            classStr={
-                !playing && song.correct ? classes.correct : null
-                    + guessed && song.correct ? classes.correct : null
-                        + guessed && !song.correct && guessed === song.name ? classes.incorrect : null
+            borderClassStr={
+                !playing && song.correct && round > 1 ? classes.correct
+                    : guessed && song.correct ? classes.correct
+                        : guessed && !song.correct && guessed === song.name ? classes.incorrect : null
             }
+            classStr={classes.cardStyles}
             key={index + 'song'}
             name={song.name}
             imgURL={song.album.images[0].url}
@@ -134,20 +146,26 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     ))
 
     return (
-        <Container>
+        <Box width='100%' height={600}>
             {gameOver &&
                 <Typography>{winner} won!</Typography>
             }
             {!gameOver &&
-                <>
-                    <Timer timer={timer} />
-                    <Grid container spacing={2}>
-                        {songsMap}
+                <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column'>
+                    <Grid container>
+                        <Grid item xs={4}/>
+                        <Grid item xs={1}>
+                            <Timer timer={timer} />
+                        </Grid>
+                        <Grid item xs={7}/>
+                        <Grid xs={10} item container spacing={2}>
+                            {songsMap}
+                        </Grid>
                     </Grid>
-                </>
+                </Box>
             }
             <audio ref={audioRef} preload='auto' src={round - 1 >= 0 && songs[round - 1].song.preview_url} />
-        </Container>
+        </Box>
     )
 }
 
