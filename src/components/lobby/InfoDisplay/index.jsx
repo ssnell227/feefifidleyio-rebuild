@@ -19,7 +19,7 @@ const InfoDisplay = ({ imageClass, playlistName, playlistImg, startGame, winner 
         height= {400}
     >
         {winner &&
-            <Typography align='center'>{winner} won last time, try and beat 'em?</Typography>
+            <Typography align='center'>{winner.username} won last time, try and beat 'em?</Typography>
         }
         <CardMedia className={imageClass} title={playlistName} component='img' src={playlistImg} />
         <Button

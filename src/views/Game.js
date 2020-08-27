@@ -68,7 +68,7 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     }
 
     const handleSetGuessed = (songName) => {
-        if (!guessed) {
+        if (!guessed && !gameOver) {
             setGuessed(songName)
         }
         if (!guessed && playing && songName === songs[round - 1].song.name) {
@@ -88,7 +88,7 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
             setGameOver(true)
             setGuessed('')
             setRound(1)
-            setWinner(winner.username)
+            setWinner(winner)
             setTimeout(() => setPlayingLobby(false), 2000)
         })
     }, [socket, setWinner, setPlayingLobby])
@@ -134,8 +134,9 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
             handleSetGuessed={handleSetGuessed}
             borderClassStr={
                 !playing && song.correct && round > 1 ? classes.correct
-                    : guessed && song.correct ? classes.correct
-                        : guessed && !song.correct && guessed === song.name ? classes.incorrect : null
+                    : gameOver && song.correct ? classes.correct
+                        : guessed && song.correct ? classes.correct
+                            : guessed && !song.correct && guessed === song.name ? classes.incorrect : null
             }
             classStr={classes.cardStyles}
             key={index + 'song'}
@@ -148,16 +149,21 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     return (
         <Box width='100%' height={600}>
             {gameOver &&
-                <Typography>{winner} won!</Typography>
+                <>
+                    <Typography variant='h2' >{winner.username} won with {winner.score} points!</Typography>
+                    <Grid container spacing={2}>
+                        {songsMap}
+                    </Grid>
+                </>
             }
             {!gameOver &&
                 <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column'>
                     <Grid container>
-                        <Grid item xs={4}/>
+                        <Grid item xs={4} />
                         <Grid item xs={1}>
                             <Timer timer={timer} />
                         </Grid>
-                        <Grid item xs={7}/>
+                        <Grid item xs={7} />
                         <Grid xs={10} item container spacing={2}>
                             {songsMap}
                         </Grid>

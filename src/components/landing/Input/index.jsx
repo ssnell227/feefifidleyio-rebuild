@@ -6,12 +6,12 @@ import {
     Button,
     Box,
     TextField,
-    Paper
+    Paper,
+    Typography
 } from '@material-ui/core'
 
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-const InputForm = ({ username, setUsername, setDisplayPlaylists, joinDisplay, handleJoinGame }) => (
+const InputForm = ({ usernamePrompt, username, setUsername, handleNewGame, joinDisplay, handleJoinGame }) => (
     <form>
         <Paper>
             <Box
@@ -25,6 +25,7 @@ const InputForm = ({ username, setUsername, setDisplayPlaylists, joinDisplay, ha
             >
                 <FormControl>
                     <TextField
+                        error= {usernamePrompt ? true : false}
                         label='Enter a username'
                         id='username-field'
                         size='medium'
@@ -40,7 +41,7 @@ const InputForm = ({ username, setUsername, setDisplayPlaylists, joinDisplay, ha
                         color='primary'
                         variant='contained'
                         type='submit'
-                        onClick={() => handleJoinGame()}
+                        onClick={(e) => handleJoinGame(e)}
                     >
                         Join game
                     </Button>}
@@ -49,7 +50,7 @@ const InputForm = ({ username, setUsername, setDisplayPlaylists, joinDisplay, ha
                         color='primary'
                         variant='contained'
                         type='submit'
-                        onClick={() => username ? setDisplayPlaylists(true) : null}
+                        onClick={(e) => handleNewGame(e)}
                     >
                         New game
                     </Button>}

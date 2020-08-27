@@ -15,7 +15,8 @@ import {
     Container,
     Grid,
     IconButton,
-    Box
+    Box,
+    TextareaAutosize
 } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
@@ -54,7 +55,7 @@ const Lobby = (props) => {
     const { gameHash, setGameHash } = gameHashValue
 
     const startGame = () => {
-        if (users) {
+        if (!loading) {
             socket.emit('startGame')
         }
     }

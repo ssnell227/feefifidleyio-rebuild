@@ -47,6 +47,7 @@ const Chat = ({ socket, loading }) => {
     const chatRef = useRef(null)
 
     const scrollToBottom = () => {
+        console.log(chatRef)
         chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
 
@@ -54,7 +55,9 @@ const Chat = ({ socket, loading }) => {
         if (!loading) {
             socket.on('newMessage', (newMessage) => {
                 setMessages(messages => [...messages, newMessage])
-                scrollToBottom()
+                if (chatRef.current) {
+                    scrollToBottom()
+                }
                 console.log('rerender')
             })
         }

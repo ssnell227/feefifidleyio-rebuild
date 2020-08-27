@@ -30,7 +30,7 @@ const PlayerList = ({ users, playing }) => {
     return (
         <Box border={1} borderRadius='borderRadius' height={400}>
             <Typography variant='h2'>Players</Typography>
-            <List container>
+            <List >
                 {usersMap}
             </List>
         </Box>
