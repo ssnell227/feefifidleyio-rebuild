@@ -6,7 +6,6 @@ import {
     Grid,
     CardMedia,
     CardActionArea,
-    Typography
 } from '@material-ui/core'
 
 const PlaylistDisplay = ({ name, imgURL, spotifyId, handleChoosePlaylist }) => (

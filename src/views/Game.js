@@ -6,7 +6,6 @@ import { Context } from '../context/Context'
 
 //Material UI
 import {
-    Container,
     Grid,
     makeStyles,
     Typography,
@@ -96,7 +95,6 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     //switches between song playing countdown and get ready countdown
     useEffect(() => {
         socket.on('switchMode', ({ currentRound, roomPlaying }) => {
-            console.log('switch mode')
 
             setPlaying(roomPlaying)
             setRound(currentRound)
@@ -107,10 +105,8 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
     useEffect(() => {
 
         socket.on('nextRound', () => {
-            // console.log(currentRound, 'round from server')
-            // setRound(currentRound)
+            
 
-            console.log(round, 'round from state')
             if (round <= songs.length) {
                 setGuessed('')
                 generateRandomOrdered(round)
@@ -150,7 +146,7 @@ const Game = ({ songs, socket, setPlayingLobby, setWinner, winner }) => {
         <Box width='100%' height={600}>
             {gameOver &&
                 <>
-                    <Typography variant='h2' >{winner.username} won with {winner.score} points!</Typography>
+                    <Typography variant='h2' >{winner.username} won with a score of {Math.floor(winner.score)}!</Typography>
                     <Grid container spacing={2}>
                         {songsMap}
                     </Grid>

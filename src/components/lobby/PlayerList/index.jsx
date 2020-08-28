@@ -4,7 +4,6 @@ import React from 'react'
 import {
     Box,
     Typography,
-    Grid,
     Avatar,
     List,
     ListItem,

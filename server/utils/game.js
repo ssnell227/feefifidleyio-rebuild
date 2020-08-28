@@ -5,10 +5,10 @@ const CronJob = require('cron').CronJob
 
 const rooms = []
 
-const rounds = 2;
+const rounds = 5;
 const dummySongs = 3
 const getReadySeconds = 3
-const gameSeconds = 5
+const gameSeconds = 10
 
 const getRandomSong = (tracksArray) => {
     let randomIndex = Math.floor(Math.random() * tracksArray.length - 1)
@@ -158,24 +158,27 @@ const removeRoom = (gameId) => {
 
 //user functions
 
-const addUser = ({ gameId, username, socketId }, io) => {
+const addUser = ({ gameId, username, socketId }, io, socket) => {
     const currentRoom = getRoom(gameId)
     const users = rooms.find(item => item.gameId === gameId).users
 
     users.push({ username, socketId, score: 0 })
 
     io.in(gameId).emit('sendSongs', { songs: getRoom(gameId).gameObjs })
+    socket.to(gameId).emit('userJoined', username)
 }
 
-const removeUser = (gameId, socketId) => {
+const removeUser = (gameId, socketId, socket) => {
     try {
         const users = rooms.find(item => item.gameId === gameId).users
 
 
-        const index = users.findIndex(user => user.socketId === socketId)
+        const user = users.find(user => user.socketId === socketId)
 
-        if (index !== -1) {
-            return users.splice(index, 1)[0]
+        if (user) {
+            socket.to(gameId).emit('userLeft', user.username)
+            console.log('removing user')
+            return users.splice(users.findIndex(item => item.socketId === user.socketId), 1)[0]
         }
     } catch {
         console.log('remove user failed')

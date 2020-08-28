@@ -15,8 +15,6 @@ import {
     Container,
     Grid,
     IconButton,
-    Box,
-    TextareaAutosize
 } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
@@ -77,7 +75,6 @@ const Lobby = (props) => {
 
         //render the Game component through a state change
         socket.on('begin', () => {
-            console.log('begin heard')
             setPlaying(true)
         })
 

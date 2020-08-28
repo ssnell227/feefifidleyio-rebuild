@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { Context } from '../context/Context'
 
 
@@ -12,7 +12,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
     List,
     Box,
-    Divider
 } from '@material-ui/core'
 
 const useStyles = makeStyles(() => ({
@@ -47,7 +46,6 @@ const Chat = ({ socket, loading }) => {
     const chatRef = useRef(null)
 
     const scrollToBottom = () => {
-        console.log(chatRef)
         chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
 
@@ -58,7 +56,36 @@ const Chat = ({ socket, loading }) => {
                 if (chatRef.current) {
                     scrollToBottom()
                 }
-                console.log('rerender')
+            })
+        }
+    }, [loading, socket])
+
+    useEffect(() => {
+        if (!loading) {
+            socket.on('userJoined', (username) => {
+                const joinMessage = {
+                        messageText:`${username} has joined`,
+                        date: Date.now()
+            }
+                setMessages(messages => [...messages, joinMessage])
+                if (chatRef.current) {
+                    scrollToBottom()
+                }
+            })
+        }
+    }, [loading, socket])
+
+    useEffect(() => {
+        if (!loading) {
+            socket.on('userLeft', (username) => {
+                const leaveMessage = {
+                        messageText:`${username} has left`,
+                        date: Date.now()
+            }
+                setMessages(messages => [...messages, leaveMessage])
+                if (chatRef.current) {
+                    scrollToBottom()
+                }
             })
         }
     }, [loading, socket])
@@ -77,8 +104,8 @@ const Chat = ({ socket, loading }) => {
         }
     }
 
-    const messagesMap = messages.sort((a, b) => a.date - b.date).map((item, index) => 
-        <ChatMessage messageClass={classes.chatMessage}  messageUserClass={item.username === username ? classes.chatRight : classes.chatLeft} key={`message-${item.date}`}  message={item} />
+    const messagesMap = messages.sort((a, b) => a.date - b.date).map((item, index) =>
+        <ChatMessage messageClass={classes.chatMessage} messageUserClass={item.username === username ? classes.chatRight : classes.chatLeft} key={`message-${item.date}`} message={item} />
     )
 
     return (

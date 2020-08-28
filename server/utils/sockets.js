@@ -12,7 +12,7 @@ module.exports = function (io) {
                 io.to(socket.id).emit('tooManyPlayers')
             } else if (getRoom(gameId) && !getRoom(gameId).playing) {
                 console.log('adding user', username )
-                addUser({gameId, username, socketId: socket.id}, io)
+                addUser({gameId, username, socketId: socket.id}, io, socket)
                 io.in(gameId).emit('roomData', {room: getRoom(gameId)})
             } else if(getRoom(gameId) && getRoom(gameId).playing ) {
                 io.to(socket.id).emit('gameInProgress')
@@ -35,7 +35,7 @@ module.exports = function (io) {
 
             // remove user from users array and resend room data to other users in room.  If no users in room, remove the room
             socket.on('leaveRoom', () => {
-                removeUser(gameId, socket.id)
+                removeUser(gameId, socket.id, socket)
                 io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('leaveRoom ln 40')
@@ -44,7 +44,7 @@ module.exports = function (io) {
             })
             socket.on('disconnect', () => {
                 console.log(gameId)
-                removeUser(gameId, socket.id)
+                removeUser(gameId, socket.id, socket)
                 io.in(gameId).emit('roomData', {room: getRoom(gameId)})
                 if (!getUsersInRoom(gameId).length) {
                     console.log('disconnect ln 49')

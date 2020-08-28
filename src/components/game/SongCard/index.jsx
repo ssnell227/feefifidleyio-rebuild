@@ -6,9 +6,7 @@ import {
     Card,
     CardMedia,
     Typography,
-    CardActionArea,
-    List,
-    ListItem
+    CardActionArea
 } from '@material-ui/core'
 
 const SongCard = ({ name, imgURL, artist, handleSetGuessed, borderClassStr, classStr }) => (

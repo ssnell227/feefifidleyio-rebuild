@@ -26,8 +26,6 @@ import {
     Typography,
     Grid,
     IconButton,
-    Avatar,
-    Box
 } from '@material-ui/core'
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -125,16 +123,13 @@ const Landing = (props) => {
                             </InfoButton>
                             <InfoButton title='About' >
                                 <Typography>
-                                    Built using Spotify's <a href='https://developer.spotify.com/documentation/web-api/'>Web API</a>
+                                    Built by <a rel='noopener noreferrer' target='_blank' href='https://stephensnell.dev'>Stephen Snell</a> using Spotify's <a target='_blank' rel='noopener noreferrer' href='https://developer.spotify.com/documentation/web-api/'>Web API</a>
                                 </Typography>
-                                <br />
-
+                                <br/>
                                 <Typography component='span'>
-                                    Check out the Github:
+                                    Check out the Github: <a target='_blank' rel='noopener noreferrer' href='https://github.com/ssnell227/feefifidleyio-rebuild'><GitHubIcon/></a>
                                 </Typography>
-                                <a><GitHubIcon/></a>
-                                
-
+                               
                             </InfoButton>
                         </Grid >
                     </Grid>

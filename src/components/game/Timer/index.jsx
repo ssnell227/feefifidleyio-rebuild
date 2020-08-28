@@ -3,7 +3,6 @@ import React from 'react'
 //Material UI
 import {
     Typography,
-    Box
 } from '@material-ui/core'
 
 const Timer = ({ timer  }) => (
