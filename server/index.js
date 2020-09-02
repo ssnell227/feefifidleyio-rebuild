@@ -12,7 +12,7 @@ const { SERVER_PORT, SESSION_SECRET } = process.env
 const app = express()
 
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, '../build')));
 
 app.use(express.json())
 app.use(cors())
