@@ -35,10 +35,10 @@ const server = app.listen(SERVER_PORT, () => console.log(`Listening on ${SERVER_
 const io = require('socket.io')(server)
 require('./utils/sockets')(io)
 
-app.get('/*', function (req, res, next) {
-    res.sendFile(path.join(__dirname, '../build', 'index.html'));
-    next()
-  });
+// app.get('/*', function (req, res, next) {
+//     res.sendFile(path.join(__dirname, '../build', 'index.html'));
+//     next()
+//   });
 
 //spotify endpoints
 
