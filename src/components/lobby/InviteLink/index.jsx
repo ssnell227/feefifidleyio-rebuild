@@ -13,7 +13,7 @@ const InviteLink = ({ gameHash }) => (
         <Toolbar>
             <Box>
                 <Typography>Invite your friends:</Typography>
-                <Typography variant='h4'> {`rebuild.feefifildey.io/landing/${gameHash}`}</Typography>
+                <Typography variant='h4'> {`https://rebuild.feefifildey.io/landing/${gameHash}`}</Typography>
             </Box>
         </Toolbar>
     </AppBar>
