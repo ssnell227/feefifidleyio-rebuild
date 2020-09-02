@@ -14,10 +14,6 @@ const app = express()
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-
-
-
-
 app.use(express.json())
 app.use(cors())
 app.use(session({
@@ -35,10 +31,6 @@ const server = app.listen(SERVER_PORT, () => console.log(`Listening on ${SERVER_
 const io = require('socket.io')(server)
 require('./utils/sockets')(io)
 
-// app.get('/*', function (req, res, next) {
-//     res.sendFile(path.join(__dirname, '../build', 'index.html'));
-//     next()
-//   });
 
 //spotify endpoints
 
@@ -46,3 +38,6 @@ app.post('/api/spotify/getPlaylistItems', ctrl.getPlaylistItems)
 
 app.get('/api/playlists', ctrl.getPlaylists)
 
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  });
