@@ -3,7 +3,8 @@ require('dotenv').config()
 const express = require('express'),
     session = require('express-session'),
     cors = require('cors'),
-    ctrl = require('./controllers/control')
+    ctrl = require('./controllers/control'),
+    path = require('path')
     
 
 const { SERVER_PORT, SESSION_SECRET } = process.env
@@ -11,7 +12,13 @@ const { SERVER_PORT, SESSION_SECRET } = process.env
 const app = express()
 
 
-app.use(express.static(`${__dirname}/../build`));
+app.use(express.static(path.join(__dirname, 'build')));
+
+-app.get('/', function (req, res) {
++app.get('/*', function (req, res) {
+   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+ });
+})
 
 
 app.use(express.json())
