@@ -7,7 +7,7 @@ const rooms = []
 
 const rounds = 5;
 const dummySongs = 3
-const getReadySeconds = 3
+const getReadySeconds = 5
 const gameSeconds = 10
 
 const getRandomSong = (tracksArray) => {
